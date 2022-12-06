@@ -151,20 +151,24 @@ void APP_Tasks ( void )
             lcd_gotoxy(1,3);
             printf_lcd("Chafla Jonathan");
             
-            appData.state = APP_STATE_SERVICE_TASKS;
+            //BSP_InitADC10;
+            
+            GPWM_Initialize();
+            
+            appData.state = APP_STATE_WAIT;
             
             break;
         }
 
         case APP_STATE_SERVICE_TASKS:
         {
-        
+            appData.state = APP_STATE_WAIT; //Enables evolution in the future
             break;
         }
 
         case APP_STATE_WAIT:
         {
-            
+            //Do nothing
             break;
         }
 
