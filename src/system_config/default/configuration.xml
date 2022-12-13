@@ -170,7 +170,7 @@
       <Template dnOrder="0">
         <Name dnOrder="0">drv_oc_static.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/driver/oc/src</Path>
-        <Checksum dnOrder="2">0E9FC6C798C064E7BFBD5B16AA599604</Checksum>
+        <Checksum dnOrder="2">C14BD794D052E44325148A3769540E09</Checksum>
       </Template>
       <Template dnOrder="1">
         <Name dnOrder="0">sys_ports_static.c</Name>
@@ -185,7 +185,7 @@
       <Template dnOrder="3">
         <Name dnOrder="0">drv_oc_static.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/default/framework/driver/oc</Path>
-        <Checksum dnOrder="2">E6CF04C7753F572A73A1D43BAB62E6A7</Checksum>
+        <Checksum dnOrder="2">0496F2F0681A9421EFECF50A8979E68E</Checksum>
       </Template>
       <Template dnOrder="4">
         <Name dnOrder="0">main.c</Name>
@@ -268,11 +268,12 @@
         <Name dnOrder="0">system_interrupt.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default</Path>
         <Checksum dnOrder="2">AFB335AF6DBCF489724E9812468AE10A</Checksum>
+        <ProjectFileChecksum dnOrder="3">C99C89306E8AE845C55A2C7880780FE6</ProjectFileChecksum>
       </Template>
       <Template dnOrder="21">
         <Name dnOrder="0">drv_oc_mapping.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/driver/oc/src</Path>
-        <Checksum dnOrder="2">B2105A615EDA964EBA38E898ED607E08</Checksum>
+        <Checksum dnOrder="2">5FF5CD3AD70FFFBABCA9FEE23345B070</Checksum>
       </Template>
       <Template dnOrder="22">
         <Name dnOrder="0">sys_clk_pic32mx.c</Name>

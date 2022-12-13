@@ -55,6 +55,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 
 #include "app.h"
 #include "Mc32DriverLcd.h"
+#include "gestPWM.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -162,6 +163,9 @@ void APP_Tasks ( void )
 
         case APP_STATE_SERVICE_TASKS:
         {
+            GPWM_GetSettings();
+            GPWM_DispSettings();
+            GPWM_ExecPWM();
             appData.state = APP_STATE_WAIT; //Enables evolution in the future
             break;
         }
