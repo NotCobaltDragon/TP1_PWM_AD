@@ -69,19 +69,24 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // Section: System Interrupt Vector Functions
 // *****************************************************************************
 // *****************************************************************************
-static char Timer1Counter;
+static uint16_t Timer1Counter;
  
 
 void __ISR(_TIMER_1_VECTOR, ipl4AUTO) IntHandlerDrvTmrInstance0(void)
 {
-    if(Timer1Counter <= 150)
+    BSP_LEDOn(BSP_LED_0);
+    
+    if(Timer1Counter <= 149)
     {
         Timer1Counter++;
+        APP_UpdateState(APP_STATE_WAIT); 
     }
     else
     {
         APP_UpdateState(APP_STATE_SERVICE_TASKS);
     }
+    BSP_LEDOff(BSP_LED_0);
+    
     PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_1);
 }
 void __ISR(_TIMER_2_VECTOR, ipl0AUTO) IntHandlerDrvTmrInstance1(void)
@@ -94,8 +99,10 @@ void __ISR(_TIMER_3_VECTOR, ipl0AUTO) IntHandlerDrvTmrInstance2(void)
 }
 void __ISR(_TIMER_4_VECTOR, ipl4AUTO) IntHandlerDrvTmrInstance3(void)
 {
-    GPWM_ExecPWMSoft();
     PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_4);
+    BSP_LEDOn(BSP_LED_1);
+    GPWM_ExecPWMSoft(&PWMData);
+    BSP_LEDOff(BSP_LED_1);
 }
  
 /*******************************************************************************

@@ -54,8 +54,6 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 
 #include "app.h"
-#include "Mc32DriverLcd.h"
-#include "gestPWM.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -73,7 +71,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
     This structure holds the application's data.
 
   Remarks:
-    This structure should be initialized by the APP_Initialize function.
+    This structure should be initialised by the APP_initialise function.
     
     Application strings and buffers are be defined outside this structure.
 */
@@ -102,13 +100,13 @@ APP_DATA appData;
 
 // *****************************************************************************
 // *****************************************************************************
-// Section: Application Initialization and State Machine Functions
+// Section: Application initialisation and State Machine Functions
 // *****************************************************************************
 // *****************************************************************************
 
 /*******************************************************************************
   Function:
-    void APP_Initialize ( void )
+    void APP_Initialise ( void )
 
   Remarks:
     See prototype in app.h.
@@ -116,13 +114,7 @@ APP_DATA appData;
 
 void APP_Initialize ( void )
 {
-    /* Place the App state machine in its initial state. */
-    appData.state = APP_STATE_INIT;
-
-    
-    /* TODO: Initialize your application's state machine and other
-     * parameters.
-     */
+    appData.state = APP_STATE_INIT; //Initial state
 }
 
 
@@ -152,9 +144,9 @@ void APP_Tasks ( void )
             lcd_gotoxy(1,3);
             printf_lcd("Chafla Jonathan");
             
-            //BSP_InitADC10;
+            BSP_InitADC10();
             
-            GPWM_Initialize();
+            GPWM_Initialize(&PWMData);
             
             appData.state = APP_STATE_WAIT;
             
@@ -163,9 +155,9 @@ void APP_Tasks ( void )
 
         case APP_STATE_SERVICE_TASKS:
         {
-            GPWM_GetSettings();
-            GPWM_DispSettings();
-            GPWM_ExecPWM();
+            GPWM_GetSettings(&PWMData);
+            GPWM_DispSettings(&PWMData);
+            GPWM_ExecPWM(&PWMData);
             appData.state = APP_STATE_WAIT; //Enables evolution in the future
             break;
         }
@@ -185,6 +177,10 @@ void APP_Tasks ( void )
     }
 }
 
+void APP_UpdateState(APP_STATES NewState)
+{
+    appData.state = NewState;
+}
  
 
 /*******************************************************************************

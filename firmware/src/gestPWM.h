@@ -15,6 +15,22 @@
 
 #include <stdint.h>
 
+#include "app.h"
+
+#include "system_config.h"
+#include "system_definitions.h"
+#include "bsp.h"
+
+#include "Mc32DriverAdc.h"
+#include "Mc32DriverLcd.h"
+#include "peripheral/oc/plib_oc.h"
+
+
+#define PERIODEMAX 1500
+#define PERIODEMIN 375
+#define PERIODEMILLIEU 1125             // = PERIODEMAX - PERIODEMIN
+#define TAILLE_MOYENNE 10
+
 /*--------------------------------------------------------*/
 // Function Prototype
 /*--------------------------------------------------------*/
@@ -36,5 +52,6 @@ void GPWM_DispSettings(S_pwmSettings *pData);        // Affichage
 void GPWM_ExecPWM(S_pwmSettings *pData);             // Execution PWM et gestion moteur.
 void GPWM_ExecPWMSoft(S_pwmSettings *pData);    // Execution PWM software.
 
+uint16_t ValADC_MOY_CH(uint16_t Tabl_MOY[]);
 
 #endif

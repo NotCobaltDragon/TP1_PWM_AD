@@ -56,8 +56,14 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
+
+#include "gestPWM.h"
+
 #include "system_config.h"
 #include "system_definitions.h"
+#include "Mc32DriverAdc.h"
+#include "Mc32DriverLcd.h"
+
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
@@ -83,17 +89,12 @@ extern "C" {
     This enumeration defines the valid application states.  These states
     determine the behavior of the application at various times.
 */
-
 typedef enum
 {
-	/* Application's state machine's initial state. */
-	APP_STATE_INIT=0,
-        APP_STATE_WAIT=1,
-	APP_STATE_SERVICE_TASKS,
-
-	/* TODO: Define states used by the application state machine. */
-
-} APP_STATES;
+	APP_STATE_INIT = 0,
+        APP_STATE_WAIT = 1,
+	APP_STATE_SERVICE_TASKS = 2,
+} APP_STATES;   //Application's state machine
 
 
 // *****************************************************************************
@@ -114,7 +115,15 @@ typedef struct
     /* The application's current state */
     APP_STATES state;
 
-    /* TODO: Define any additional data used by the application. */
+    /*Valeur des ADCs*/
+    S_ADCResults adcRes;
+    
+    /*Valeur PWM*/
+    uint16_t PulseWidthOC2;
+    
+    uint16_t PulseWidthOC3;
+    
+    uint16_t PulseTimer4;
 
 } APP_DATA;
 
