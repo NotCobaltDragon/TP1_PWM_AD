@@ -77,27 +77,6 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 */
 
 APP_DATA appData;
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Application Callback Functions
-// *****************************************************************************
-// *****************************************************************************
-
-/* TODO:  Add any necessary callback functions.
-*/
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Application Local Functions
-// *****************************************************************************
-// *****************************************************************************
-
-
-/* TODO:  Add any necessary local functions.
-*/
-
-
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application initialisation and State Machine Functions
@@ -133,20 +112,21 @@ void APP_Tasks ( void )
         /* Application's initial state. */
         case APP_STATE_INIT:
         {
-            
+            //Init LCD and turn ON backlight
             lcd_init();
             lcd_bl_on();
             
+            //Display Init Text
             lcd_gotoxy(1,1);
             printf_lcd("TP1 PWM+AD 2022-2023");
             lcd_gotoxy(1,2);
-            printf_lcd("Steffen Alexandre");
-            lcd_gotoxy(1,3);
             printf_lcd("Chafla Jonathan");
+            lcd_gotoxy(1,3);
+            printf_lcd("Steffen Alexandre");
             
-            BSP_InitADC10();
+            BSP_InitADC10();  //Init of ADC
             
-            GPWM_Initialize(&PWMData);
+            GPWM_Initialize(&PWMData);  //Init H Bridge & OCs
             
             appData.state = APP_STATE_WAIT;
             
@@ -164,14 +144,13 @@ void APP_Tasks ( void )
 
         case APP_STATE_WAIT:
         {
-            //Do nothing
+            //Do Nothing
             break;
         }
 
         /* The default state should never be executed. */
         default:
         {
-            /* TODO: Handle error in application's state machine. */
             break;
         }
     }

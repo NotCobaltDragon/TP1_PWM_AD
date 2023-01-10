@@ -16,7 +16,7 @@
 #include "GestPWM.h"
 
 
-S_pwmSettings PWMData;      // pour les settings
+S_pwmSettings PWMData;  //For settings value
 APP_DATA appData;
 
 void GPWM_Initialize(S_pwmSettings *pData)
@@ -27,181 +27,116 @@ void GPWM_Initialize(S_pwmSettings *pData)
     pData -> absAngle = 0;
     pData -> absSpeed = 0;
     
-   // Init état du pont en H
+    //Init H Bridge
     BSP_EnableHbrige();
     
-   // lance les timers et OC
-   DRV_TMR0_Start();    //Initialisation du timer 1
-   DRV_TMR1_Start();    //Initialisation du timer 2
-   DRV_TMR2_Start();    //Initialisation du timer 3
-   DRV_TMR3_Start();    //Initialisation du timer 4
+   //Init timers 1 to 4
+   DRV_TMR0_Start();
+   DRV_TMR1_Start();
+   DRV_TMR2_Start();
+   DRV_TMR3_Start();
    
-   DRV_OC0_Start();      //Initilisation de l'OC 2
-   DRV_OC1_Start();      //Initilisation de l'OC 3
+   //Init OC 2 and 3
+   DRV_OC0_Start();
+   DRV_OC1_Start(); 
    
-   STBY_HBRIDGE_W = 1;  //Pont en H Standby toujours à 1
-    
+   STBY_HBRIDGE_W = 1;  //H Bridge in standby, always at 1
 }
 
-// Obtention vitesse et angle (mise a jour des 4 champs de la structure)
+// Get values for speed and angle 
 void GPWM_GetSettings(S_pwmSettings *pData)	
-{
-   /*S_ADCResults Res;
+{   
+    static uint16_t Table_Avg_CH0[AVERAGE_SIZE];    //Table for rolling average
     
-    int TableAverage0[10];
-    int TableAverage1[10];
-    
-    char ImoyG0;
-    char ImoyG1;
-    
-    char Valeur0to198;
-    
-    const float VALEUR_ANGLE_MAX = 1023;
-    const float VALEUR_BRUTE_AD_MAX = 180;
-    const float VALEUR_NON_SIGNEE_MAX = 198;
-    
-    // initialise le convertisseur AD
-    
-    BSP_InitADC10();
-    
-    // lecture du canal 0
-    
-    for (ImoyG0 = 0; ImoyG0 < 10; ImoyG0++)
-    {
-        Res = BSP_ReadAllADC();
-    
-        TableAverage0[ImoyG0] = Res.Chan0;
-    }
- 
-    // lecture du canal 1
-    
-    for (ImoyG1 = 0; ImoyG1 < 10; ImoyG1++)
-    {
-        Res = BSP_ReadAllADC();
-    
-        TableAverage1[ImoyG1] = Res.Chan1;
-    }
-    
-    // clear le canal 0
-    
-    Res.Chan0 = 0;
-    
-    // clear le canal 1
-    
-    Res.Chan1 = 0;
-    
-    // moyenne glissante canal 0
-    
-    for (ImoyG0 = 0; ImoyG0 < 10; ImoyG0++)
-    {
-        Res.Chan0 = Res.Chan0 + TableAverage0[ImoyG0]; 
-    }
-    
-    Res.Chan0 = Res.Chan0 / 10;
-    
-    // moyenne glissante canal 1
-    
-    for (ImoyG1 = 0; ImoyG1 < 10; ImoyG1++)
-    {
-        Res.Chan1 = Res.Chan1 + TableAverage1[ImoyG1]; 
-    }
-    
-    Res.Chan1 = Res.Chan1 / 10;
-    
-    
-    // Information speed et absSpeed
-    
-    Valeur0to198 = Res.Chan0 * (VALEUR_BRUTE_AD_MAX / VALEUR_NON_SIGNEE_MAX);
-    pData ->SpeedSetting = Valeur0to198 - 99; 
-    pData ->absSpeed = Valeur0to198 - 99;
-    
-    // Information absAngle, AngleSetting
-    
-    pData ->absAngle =  Res.Chan1 * (VALEUR_BRUTE_AD_MAX / VALEUR_ANGLE_MAX);
-    pData ->AngleSetting = pData ->absAngle - 90;*/
-    
-    uint16_t Val_moyenneADC_CH0, Val_moyenneADC_CH1;
+    static uint16_t Table_Avg_CH1[AVERAGE_SIZE];    //Table for rolling average
+
+    uint16_t Avg_ADC_CH0, Avg_ADC_CH1;  //Output average values 
     uint8_t Val_Conv;
-    static uint16_t Tab_moy_CH0[TAILLE_MOYENNE] = {0};
     
-    static uint16_t Tab_moy_CH1[TAILLE_MOYENNE] = {0}; 
+    /******---Conversion of ADC, Channel 0---***********/
     
-   
-    /******---Traitement 1er AD---***********/
     // Lecture du convertisseur AD-CH0
-    appData.adcRes = BSP_ReadAllADC();//Lecture des pot
-    Tab_moy_CH0[0] = appData.adcRes.Chan0;
-    Tab_moy_CH1[0] = appData.adcRes.Chan1;
+    appData.adcRes = BSP_ReadAllADC();  //Read all potentiometers
+    Table_Avg_CH0[0] = appData.adcRes.Chan0;
+    Table_Avg_CH1[0] = appData.adcRes.Chan1;
     
-    Val_moyenneADC_CH0 = ValADC_MOY_CH(Tab_moy_CH0); //Appel de fonction pour avoir une moyenne glissante sur les 10 dernières valeurs
-    
+    Avg_ADC_CH0 = ValADC_MOY_CH(Table_Avg_CH0); //Call function to get a rolling average
+
     // conversion
-    Val_Conv = (Val_moyenneADC_CH0*198)/1023; //Valeur brute de 0 à 198
-    pData->SpeedSetting = Val_Conv - 99; //Valeurs signée -99 à 99
+    Val_Conv = (Avg_ADC_CH0*198)/1023;  //Raw value from 0 to 198
+    pData->SpeedSetting = Val_Conv - 99;    //Signed value from -99 to 99
     
     if(pData->SpeedSetting < 0)
     {
-        pData->absSpeed = pData->SpeedSetting * -1; //Conversion val négatif à positive
+        pData->absSpeed = pData->SpeedSetting * -1; //Convert negative value to positive
     }
     else
     {
         pData->absSpeed = pData->SpeedSetting;
     }
-    /******---Traitement 2ème AD---***********/
+
+    /******---Conversion of ADC, Channel 1---***********/
+
     // Lecture du convertisseur AD-CH1
-    Val_moyenneADC_CH1 = ValADC_MOY_CH(Tab_moy_CH1); //Appel de fonction pour avoir une moyenne glissante sur les 10 dernières valeurs   
+    Avg_ADC_CH1 = ValADC_MOY_CH(Table_Avg_CH1); //Call function to get a rolling average  
    
     // conversion
-    pData->absAngle = (Val_moyenneADC_CH1*180)/1023; //Valeur brute de 0 à 180
-    pData->AngleSetting = pData->absAngle - 90; //Valeurs signée -90 à 90   
+    pData->absAngle = (Avg_ADC_CH1*180)/1023;    //Raw value from 0 to 180
+    pData->AngleSetting = pData->absAngle - 90;     //Signed value from -90 to 90   
 }
 
-
-// Affichage des information en exploitant la structure
-void GPWM_DispSettings(S_pwmSettings *pData)
+void GPWM_DispSettings(S_pwmSettings *pData) //Display settings on LCD
 {
-    //lcd_gotoxy(1, 1);
-    //printf_lcd("TP1 PWM 2022-2023");
-    
     lcd_gotoxy(1, 2);
-    if(pData -> SpeedSetting >= 0)
+    if(pData -> SpeedSetting >= 0)  //Check if value is positive/negative
     {
-        printf_lcd("Speed Setting   +%02d", pData -> SpeedSetting );
+        printf_lcd("Speed Setting   +%2d", pData -> SpeedSetting );
     }
     else
     {
-        printf_lcd("Speed Setting   %03d", pData -> SpeedSetting );
+        printf_lcd("Speed Setting   %3d", pData -> SpeedSetting );
     }
     
     lcd_gotoxy(1, 3);
-    printf_lcd("Absolute Speed   %02d", pData -> absSpeed ); 
+    printf_lcd("Absolute Speed   %2d", pData -> absSpeed ); 
 
     lcd_gotoxy(1, 4);
-    printf_lcd("Angle           %03d", pData -> absAngle ); 
+    if(pData -> AngleSetting >= 0)  //Check if value is positive/negative
+    {
+        printf_lcd("Angle           +%2d", pData -> AngleSetting );
+    }
+    else
+    {
+        printf_lcd("Angle           %3d", pData -> AngleSetting );
+    }
 }
 
 // Execution PWM et gestion moteur à partir des info dans structure
 void GPWM_ExecPWM(S_pwmSettings *pData)
 {
-    if(pData->SpeedSetting < 0) //On vient changer le sens du moteur
+    if(pData->SpeedSetting > 0)
     {
-        //Sens anti-horaire
-        AIN1_HBRIDGE_W = 0;
-        AIN2_HBRIDGE_W = 1;
-    }
-    else
-    {
-        //Sens horaire
+        STBY_HBRIDGE_W = 1;
         AIN1_HBRIDGE_W = 1;
         AIN2_HBRIDGE_W = 0;
     }
+    else if(pData->SpeedSetting == 0)
+    {
+        STBY_HBRIDGE_W = 0;
+    }
+    else
+    {
+        STBY_HBRIDGE_W = 1;
+        AIN1_HBRIDGE_W = 0;
+        AIN2_HBRIDGE_W = 1;
+    }
     
     //Reglage largeur impulsion moteur DC
-    appData.PulseWidthOC2 = ((pData->absSpeed*249) /99);
+    appData.PulseWidthOC2 = ((pData->absSpeed*1999)/99); //old *249)/99
     PLIB_OC_PulseWidth16BitSet(OC_ID_2, appData.PulseWidthOC2);
     
     //Reglage largeur impulsion servomoteur
-    appData.PulseWidthOC3 = (pData->absAngle * 2250 / 180) + 750;
+    appData.PulseWidthOC3 = (pData->absAngle * ((13499 - 2999)/180) + 2999) ; //  //old * 2250 / 180) + 750
     PLIB_OC_PulseWidth16BitSet(OC_ID_3, appData.PulseWidthOC3);    
 }
 
@@ -237,7 +172,7 @@ uint16_t ValADC_MOY_CH(uint16_t Tabl_MOY[])
     uint8_t i = 0;
     
     //remplissage des 10 cases du tableau
-    for(i = 0; i < TAILLE_MOYENNE; i++)
+    for(i = 0; i < AVERAGE_SIZE; i++)
     {
         ValTotal = Tabl_MOY[9-i] + ValTotal;
         if(i < 9)
@@ -246,5 +181,5 @@ uint16_t ValADC_MOY_CH(uint16_t Tabl_MOY[])
         }
     }
     
-    return(ValTotal/TAILLE_MOYENNE);
+    return(ValTotal/AVERAGE_SIZE);
 }

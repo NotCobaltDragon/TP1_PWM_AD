@@ -26,10 +26,12 @@
 #include "peripheral/oc/plib_oc.h"
 
 
-#define PERIODEMAX 1500
-#define PERIODEMIN 375
-#define PERIODEMILLIEU 1125             // = PERIODEMAX - PERIODEMIN
-#define TAILLE_MOYENNE 10
+//#define PERIODEMILLIEU 1125             // = PERIODEMAX - PERIODEMIN
+#define MIN_PERIOD 375
+#define MAX_PERIOD 1500
+
+
+#define AVERAGE_SIZE 10
 
 /*--------------------------------------------------------*/
 // Function Prototype
@@ -46,11 +48,11 @@ extern S_pwmSettings PWMData;
 
 void GPWM_Initialize(S_pwmSettings *pData);
 
-// Ces 3 fonctions ont pour paramètre un pointeur sur la structure S_pwmSettings.
-void GPWM_GetSettings(S_pwmSettings *pData);         // Obtention vitesse et angle
-void GPWM_DispSettings(S_pwmSettings *pData);        // Affichage
-void GPWM_ExecPWM(S_pwmSettings *pData);             // Execution PWM et gestion moteur.
-void GPWM_ExecPWMSoft(S_pwmSettings *pData);    // Execution PWM software.
+// Functions use a pointer from the structure S_pwmSettings
+void GPWM_GetSettings(S_pwmSettings *pData);    //Get Speed and Angle
+void GPWM_DispSettings(S_pwmSettings *pData);   //Update Display
+void GPWM_ExecPWM(S_pwmSettings *pData);        // PWM execution and Motor management
+void GPWM_ExecPWMSoft(S_pwmSettings *pData);    // Software PWM execution
 
 uint16_t ValADC_MOY_CH(uint16_t Tabl_MOY[]);
 

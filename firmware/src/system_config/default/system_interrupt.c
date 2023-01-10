@@ -75,8 +75,9 @@ static uint16_t Timer1Counter;
 void __ISR(_TIMER_1_VECTOR, ipl4AUTO) IntHandlerDrvTmrInstance0(void)
 {
     BSP_LEDOn(BSP_LED_0);
+    PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_1); //Reset Flag
     
-    if(Timer1Counter <= 149)
+    if(Timer1Counter <= 149) //Init Time
     {
         Timer1Counter++;
         APP_UpdateState(APP_STATE_WAIT); 
